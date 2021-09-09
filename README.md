@@ -19,8 +19,22 @@ roboflowのオマージュです
  - pythonファイルの最初のグローバル引数を変更することで、`train`、`test`、`valid`の割合を変更できます。
     
     - train + test + valid = 10にしてください。
-  
-## point_checker.py
+ - 出力フォルダの階層は以下のようになっています
+ ```
+ - trees
+  ├── data.yaml
+  ├── test
+  │   ├── images
+  │   └── labels
+  ├── train
+  │   ├── images
+  │   └── labels
+  └── valid
+      ├── images
+      └── labels
+```
+- もし、出力フォルダを変えたければ`BASE_OUTPUT_PATH`を変更してください（初期では実行したフォルダにtreesが作成されます）
+- ## point_checker.py
 
 - moyaflow.pyで出来た画像ファイルとlabel.txtが正しく対応しているかを確認するプログラムです。
 
