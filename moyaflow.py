@@ -6,7 +6,7 @@ import numpy as np
 import random, string
 from PIL import Image
 
-BASE_OUTPUT_PATH = "./testtrees"
+BASE_OUTPUT_PATH = "./trees"
 train_rate = 7
 test_rate = 2
 vaild_rate = 1
