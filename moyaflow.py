@@ -3,6 +3,7 @@ import json
 import glob
 import argparse
 import numpy as np
+import cv2
 import random, string
 from PIL import Image
 
@@ -20,6 +21,7 @@ class arg_class:
         parser.add_argument('INPUT_JSON', help="Please set the json directory.")
         parser.add_argument('INPUT_IMAGE', help="Please set the image directory.")
         parser.add_argument('-s', '--size', help='Option when you want to set image size.', type=int, default=640)
+        parser.add_argument('-d', '--DataArgment', help='Option when you want to "Data Argmentation".', nargs='*')
         args = parser.parse_args()
 
         return(args)
@@ -51,24 +53,39 @@ def make_yaml():
 
 class image_class:
 
-    def expand2square(self, pil_img, background_color):
-        width, height = pil_img.size
+    def expand2square(self, cv2_img, background_color):
+        width, height, _ = cv2_img.shape
         if width == height:
-            return pil_img
+            return cv2_img
         elif width > height:
-            result = Image.new(pil_img.mode, (width, width), background_color)
-            result.paste(pil_img, (0, (width - height) // 2))
+            result = np.zeros((width, width, 3))
+            result += [background_color[0],background_color[1],background_color[2]][::-1]
+            result[0:width, (width - height)//2:((width - height) // 2) + height] = cv2_img
             return result
         else:
-            result = Image.new(pil_img.mode, (height, height), background_color)
-            result.paste(pil_img, ((height - width) // 2, 0))
+            result = np.zeros((height, height, 3))
+            result += [background_color[0],background_color[1],background_color[2]][::-1]
+            result[(height - width) // 2:((height - width) // 2) + width, 0:height] = cv2_img
             return result
     
     def resize_image(self, img, c, rsize):
-        return self.expand2square(img, c).resize((rsize, rsize))
-  
+        # return self.expand2square(img, c).resize((rsize, rsize))
+        return cv2.resize(self.expand2square(img, c), dsize=(rsize, rsize))
 
-def make_points_file(jsondata, TTVPATH, rsize):
+class DataArgmantation_class:
+
+    def Salt_noise(self, path):
+        src = cv2.imread(path, 1)
+        s_vs_p = 0.5
+        amount = 0.004
+        sp_img = src.copy()
+        num_salt = np.ceil(amount * src.size * s_vs_p)
+        coords = [np.random.randint(0, i-1 , int(num_salt)) for i in src.shape]
+        sp_img[tuple(coords[:-1])] = (255,255,255)
+        return sp_img
+
+
+def make_points_file(jsondata, TTVPATH, rsize, name=''):
     if TTVPATH == 'train': OUTPUT_PATH = BASE_OUTPUT_PATH + '/train/labels'
     elif TTVPATH == 'test': OUTPUT_PATH = BASE_OUTPUT_PATH + '/test/labels'
     elif TTVPATH == 'valid': OUTPUT_PATH = BASE_OUTPUT_PATH + '/valid/labels'
@@ -83,7 +100,7 @@ def make_points_file(jsondata, TTVPATH, rsize):
     first = True
     file = open(jsondata , 'r')
     jsonfile = json.load(file)
-    name = jsonfile['asset']['name']
+    if name == '': name = jsonfile['asset']['name']
     id = jsonfile['asset']['id']
     img_width = jsonfile['asset']['size']['width']
     img_height = jsonfile['asset']['size']['height']
@@ -127,11 +144,12 @@ def main():
     ArgClass = arg_class()
     DirClass = dir_class()
     ImgClass = image_class()
+    DaClass= DataArgmantation_class()
     args = ArgClass.get_args()
     image_size = args.size
-
     INPUT_JSON = args.INPUT_JSON
     INPUT_IMAGE = args.INPUT_IMAGE
+    data_argment = args.DataArgment
 
     input_ok, waring_str = ArgClass.check_INPUT(INPUT_JSON)
     if not input_ok:
@@ -156,19 +174,26 @@ def main():
     random.shuffle(json_list)
     for i in range(trainnum):
         name, id = make_points_file(json_list[i], 'train', image_size)
-        im = Image.open(INPUT_IMAGE + '/' + name)
+        im = cv2.imread(INPUT_IMAGE + '/' + name)
         im_new = ImgClass.resize_image(im, (0, 0, 0), image_size)
-        im_new.save(BASE_OUTPUT_PATH + '/train/images/' + name + '.rf.' + id + '.jpg', quality=95)
+        cv2.imwrite(BASE_OUTPUT_PATH + '/train/images/' + name + '.rf.' + id + '.jpg', im_new)
+        if not {'sa', 'sal', 'salt'}.isdisjoint(set(data_argment)):
+            make_points_file(json_list[i], 'train', image_size, name + 'salt')
+            salt_im = DaClass.Salt_noise(INPUT_IMAGE + '/' + name)
+            salt_new_im = ImgClass.resize_image(salt_im, (0, 0, 0), image_size)
+            cv2.imwrite(BASE_OUTPUT_PATH + '/train/images/' + name + 'salt.rf.' + id + '.jpg', salt_new_im)
+
     for i in range(trainnum, trainnum + testnum):
         name, id = make_points_file(json_list[i], 'test',image_size)
-        im = Image.open(INPUT_IMAGE + '/' + name)
+        im = cv2.imread(INPUT_IMAGE + '/' + name)
         im_new = ImgClass.resize_image(im, (0, 0, 0), image_size)
-        im_new.save(BASE_OUTPUT_PATH + '/test/images/' + name + '.rf.' + id + '.jpg', quality=95)
+        cv2.imwrite(BASE_OUTPUT_PATH + '/test/images/' + name + '.rf.' + id + '.jpg', im_new)
+
     for i in range(trainnum + testnum, jsonnum):
         name, id = make_points_file(json_list[i], 'valid', image_size)
-        im = Image.open(INPUT_IMAGE + '/' + name)
+        im = cv2.imread(INPUT_IMAGE + '/' + name)
         im_new = ImgClass.resize_image(im, (0, 0, 0), image_size)
-        im_new.save(BASE_OUTPUT_PATH + '/valid/images/' + name + '.rf.' + id + '.jpg', quality=95)
+        cv2.imwrite(BASE_OUTPUT_PATH + '/valid/images/' + name + '.rf.' + id + '.jpg', im_new)
 
 if __name__ == '__main__':
     main()
