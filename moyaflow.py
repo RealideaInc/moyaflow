@@ -83,13 +83,14 @@ class DataArgmantation_class:
         sp_img[tuple(coords[:-1])] = (255,255,255)
         return sp_img
 
-    def Papper_noise(self, path, amount=0.015):
+    def Pepper_noise(self, path, amount=0.015):
         src = cv2.imread(path, 1)
         s_vs_p = 0.5
         sp_img = src.copy()
         num_pepper = np.ceil(amount* src.size * (1. - s_vs_p))
         coords = [np.random.randint(0, i-1 , int(num_pepper)) for i in src.shape]
-        sp_img[coords[:-1]] = (0,0,0)
+        sp_img[tuple(coords[:-1])] = (0,0,0)
+        return sp_img
 
 
 def make_points_file(jsondata, TTVPATH, rsize, name=''):
@@ -184,11 +185,19 @@ def main():
         im = cv2.imread(INPUT_IMAGE + '/' + name)
         im_new = ImgClass.resize_image(im, (0, 0, 0), image_size)
         cv2.imwrite(BASE_OUTPUT_PATH + '/train/images/' + name + '.rf.' + id + '.jpg', im_new)
+
         if not {'sa', 'sal', 'salt'}.isdisjoint(set(data_argment)):
             make_points_file(json_list[i], 'train', image_size, name + 'salt')
             salt_im = DaClass.Salt_noise(INPUT_IMAGE + '/' + name)
             salt_new_im = ImgClass.resize_image(salt_im, (0, 0, 0), image_size)
             cv2.imwrite(BASE_OUTPUT_PATH + '/train/images/' + name + 'salt.rf.' + id + '.jpg', salt_new_im)
+
+        if not {'pepper', 'peppe', 'pepp', 'pep', 'pe'}.isdisjoint(set(data_argment)):
+            make_points_file(json_list[i], 'train', image_size, name + 'pepper')
+            pep_im = DaClass.Pepper_noise(INPUT_IMAGE + '/' + name)
+            pep_new_im = ImgClass.resize_image(pep_im, (0, 0, 0), image_size)
+            cv2.imwrite(BASE_OUTPUT_PATH + '/train/images/' + name + 'pepper.rf.' + id + '.jpg', pep_new_im)
+
 
     for i in range(trainnum, trainnum + testnum):
         name, id = make_points_file(json_list[i], 'test',image_size)
