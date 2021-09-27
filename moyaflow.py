@@ -92,6 +92,12 @@ class DataArgmantation_class:
         sp_img[tuple(coords[:-1])] = (0,0,0)
         return sp_img
 
+    def Smooth_noise(self, path):
+        average_square = (10,10)
+        src = cv2.imread(path, 1)
+        blur_img = cv2.blur(src, average_square)
+        return blur_img
+
 
 def make_points_file(jsondata, TTVPATH, rsize, name=''):
     if TTVPATH == 'train': OUTPUT_PATH = BASE_OUTPUT_PATH + '/train/labels'
@@ -186,7 +192,7 @@ def main():
         im_new = ImgClass.resize_image(im, (0, 0, 0), image_size)
         cv2.imwrite(BASE_OUTPUT_PATH + '/train/images/' + name + '.rf.' + id + '.jpg', im_new)
 
-        if not {'sa', 'sal', 'salt'}.isdisjoint(set(data_argment)):
+        if not {'salt', 'sal', 'sa'}.isdisjoint(set(data_argment)):
             make_points_file(json_list[i], 'train', image_size, name + 'salt')
             salt_im = DaClass.Salt_noise(INPUT_IMAGE + '/' + name)
             salt_new_im = ImgClass.resize_image(salt_im, (0, 0, 0), image_size)
@@ -197,6 +203,12 @@ def main():
             pep_im = DaClass.Pepper_noise(INPUT_IMAGE + '/' + name)
             pep_new_im = ImgClass.resize_image(pep_im, (0, 0, 0), image_size)
             cv2.imwrite(BASE_OUTPUT_PATH + '/train/images/' + name + 'pepper.rf.' + id + '.jpg', pep_new_im)
+
+        if not {'smooth', 'smoot', 'smoo', 'smo', 'sm'}.isdisjoint(set(data_argment)):
+            make_points_file(json_list[i], 'train', image_size, name + 'smooth')
+            smooth_im = DaClass.Smooth_noise(INPUT_IMAGE + '/' + name)
+            smooth_new_im = ImgClass.resize_image(smooth_im, (0, 0, 0), image_size)
+            cv2.imwrite(BASE_OUTPUT_PATH + '/train/images/' + name + 'smooth.rf.' + id + '.jpg', smooth_new_im)
 
 
     for i in range(trainnum, trainnum + testnum):
