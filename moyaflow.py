@@ -217,11 +217,47 @@ def main():
         im_new = ImgClass.resize_image(im, (0, 0, 0), image_size)
         cv2.imwrite(BASE_OUTPUT_PATH + '/test/images/' + name + '.rf.' + id + '.jpg', im_new)
 
+        if not {'salt', 'sal', 'sa'}.isdisjoint(set(data_argment)):
+            make_points_file(json_list[i], 'test', image_size, name + 'salt')
+            salt_im = DaClass.Salt_noise(INPUT_IMAGE + '/' + name)
+            salt_new_im = ImgClass.resize_image(salt_im, (0, 0, 0), image_size)
+            cv2.imwrite(BASE_OUTPUT_PATH + '/test/images/' + name + 'salt.rf.' + id + '.jpg', salt_new_im)
+
+        if not {'pepper', 'peppe', 'pepp', 'pep', 'pe'}.isdisjoint(set(data_argment)):
+            make_points_file(json_list[i], 'test', image_size, name + 'pepper')
+            pep_im = DaClass.Pepper_noise(INPUT_IMAGE + '/' + name)
+            pep_new_im = ImgClass.resize_image(pep_im, (0, 0, 0), image_size)
+            cv2.imwrite(BASE_OUTPUT_PATH + '/test/images/' + name + 'pepper.rf.' + id + '.jpg', pep_new_im)
+
+        if not {'smooth', 'smoot', 'smoo', 'smo', 'sm'}.isdisjoint(set(data_argment)):
+            make_points_file(json_list[i], 'test', image_size, name + 'smooth')
+            smooth_im = DaClass.Smooth_noise(INPUT_IMAGE + '/' + name)
+            smooth_new_im = ImgClass.resize_image(smooth_im, (0, 0, 0), image_size)
+            cv2.imwrite(BASE_OUTPUT_PATH + '/test/images/' + name + 'smooth.rf.' + id + '.jpg', smooth_new_im)
+
     for i in range(trainnum + testnum, jsonnum):
         name, id = make_points_file(json_list[i], 'valid', image_size)
         im = cv2.imread(INPUT_IMAGE + '/' + name)
         im_new = ImgClass.resize_image(im, (0, 0, 0), image_size)
         cv2.imwrite(BASE_OUTPUT_PATH + '/valid/images/' + name + '.rf.' + id + '.jpg', im_new)
+
+        if not {'salt', 'sal', 'sa'}.isdisjoint(set(data_argment)):
+            make_points_file(json_list[i], 'valid', image_size, name + 'salt')
+            salt_im = DaClass.Salt_noise(INPUT_IMAGE + '/' + name)
+            salt_new_im = ImgClass.resize_image(salt_im, (0, 0, 0), image_size)
+            cv2.imwrite(BASE_OUTPUT_PATH + '/valid/images/' + name + 'salt.rf.' + id + '.jpg', salt_new_im)
+
+        if not {'pepper', 'peppe', 'pepp', 'pep', 'pe'}.isdisjoint(set(data_argment)):
+            make_points_file(json_list[i], 'valid', image_size, name + 'pepper')
+            pep_im = DaClass.Pepper_noise(INPUT_IMAGE + '/' + name)
+            pep_new_im = ImgClass.resize_image(pep_im, (0, 0, 0), image_size)
+            cv2.imwrite(BASE_OUTPUT_PATH + '/valid/images/' + name + 'pepper.rf.' + id + '.jpg', pep_new_im)
+
+        if not {'smooth', 'smoot', 'smoo', 'smo', 'sm'}.isdisjoint(set(data_argment)):
+            make_points_file(json_list[i], 'valid', image_size, name + 'smooth')
+            smooth_im = DaClass.Smooth_noise(INPUT_IMAGE + '/' + name)
+            smooth_new_im = ImgClass.resize_image(smooth_im, (0, 0, 0), image_size)
+            cv2.imwrite(BASE_OUTPUT_PATH + '/valid/images/' + name + 'smooth.rf.' + id + '.jpg', smooth_new_im)
 
 if __name__ == '__main__':
     main()
