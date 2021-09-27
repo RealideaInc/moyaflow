@@ -12,9 +12,6 @@ train_rate = 7
 test_rate = 2
 vaild_rate = 1
 
-def randomname(n):
-   return ''.join(random.choices(string.ascii_letters + string.digits, k=n))
-
 class arg_class:
     def get_args(self):
         parser = argparse.ArgumentParser(description="Convert json file created by VoTT to yolov5 format.")
