@@ -15,6 +15,7 @@ roboflowのビッグバネイトです。パクリじゃないです。
 
   - -h, --help    ：        ヘルプ。
   - -s SIZE, --size SIZE：  出力画像ファイルの一辺の長さを決めます（画像ファイルは正方形）。
+  - -d DataArgment, --DaraArgment：　水増しデータを作るオプションです。現在使えるフィルタはsalt, papper, smoothの三種類です。使いたいフィルタを-dの後に入れるとその分画像データが水増しされます。例えば、saltとsmoothを使いたければ"-d salt smooth"とします（これらは省略して"-d sa sm"としても動きます）。
   
  - pythonファイルの最初のグローバル引数を変更することで、`train`、`test`、`valid`の割合を変更できます。
     
