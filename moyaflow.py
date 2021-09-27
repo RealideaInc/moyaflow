@@ -74,15 +74,22 @@ class image_class:
 
 class DataArgmantation_class:
 
-    def Salt_noise(self, path):
+    def Salt_noise(self, path, amount=0.015):
         src = cv2.imread(path, 1)
         s_vs_p = 0.5
-        amount = 0.004
         sp_img = src.copy()
         num_salt = np.ceil(amount * src.size * s_vs_p)
         coords = [np.random.randint(0, i-1 , int(num_salt)) for i in src.shape]
         sp_img[tuple(coords[:-1])] = (255,255,255)
         return sp_img
+
+    def Papper_noise(self, path, amount=0.015):
+        src = cv2.imread(path, 1)
+        s_vs_p = 0.5
+        sp_img = src.copy()
+        num_pepper = np.ceil(amount* src.size * (1. - s_vs_p))
+        coords = [np.random.randint(0, i-1 , int(num_pepper)) for i in src.shape]
+        sp_img[coords[:-1]] = (0,0,0)
 
 
 def make_points_file(jsondata, TTVPATH, rsize, name=''):
