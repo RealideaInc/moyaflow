@@ -6,164 +6,18 @@ import numpy as np
 import cv2
 import random, string
 from PIL import Image
-
+from Class import arg_class, dir_class, image_class, DataArgmantation_class, txt_class
 BASE_OUTPUT_PATH = "./trees"
 train_rate = 7
 test_rate = 2
 vaild_rate = 1
-
-class arg_class:
-    def get_args(self):
-        parser = argparse.ArgumentParser(description="Convert json file created by VoTT to yolov5 format.")
-        parser.add_argument('INPUT_JSON', help="Please set the json directory.")
-        parser.add_argument('INPUT_IMAGE', help="Please set the image directory.")
-        parser.add_argument('-s', '--size', help='Option when you want to set image size.', type=int, default=640)
-        parser.add_argument('-d', '--DataArgment', 
-            help='Option when you want to "Data Argmentation". The types are now salt noise, pepper noise, smoothing noise. For example, if you want to use salt noise and smooth noise, use "-d salt smooth". (It\'s okay to shorten it like "-d sa sm")', nargs='*')
-        args = parser.parse_args()
-
-        return(args)
-
-    def check_INPUT(self, INP):
-        if not os.path.isdir(INP):
-            return False, '【 Error 】directory({}) does not exist.'.format(INP)
-        return True, ''
-
-class dir_class:
-
-    def make_dir(self, PATH):
-        if not os.path.exists(PATH):
-            print('【 Notice 】Create an {} directory.'.format(PATH))
-            os.makedirs(PATH)
-
-    def make_tree_dir(self):
-        self.make_dir(BASE_OUTPUT_PATH + '/test/images')
-        self.make_dir(BASE_OUTPUT_PATH + '/test/labels')
-        self.make_dir(BASE_OUTPUT_PATH + '/train/images')
-        self.make_dir(BASE_OUTPUT_PATH + '/train/labels')
-        self.make_dir(BASE_OUTPUT_PATH + '/valid/images')
-        self.make_dir(BASE_OUTPUT_PATH + '/valid/labels')
-
-def make_yaml():
-    YAML_PATH = 'train: {}/train/images\nval: {}/valid/images\nnc: 1\nnames: [\'Tree\']'.format(BASE_OUTPUT_PATH, BASE_OUTPUT_PATH)
-    with open(BASE_OUTPUT_PATH + '/data.yaml', mode='w') as f:
-        f.write(YAML_PATH)
-
-class image_class:
-
-    def expand2square(self, cv2_img, background_color):
-        width, height, _ = cv2_img.shape
-        if width == height:
-            return cv2_img
-        elif width > height:
-            result = np.zeros((width, width, 3))
-            result += [background_color[0],background_color[1],background_color[2]][::-1]
-            result[0:width, (width - height)//2:((width - height) // 2) + height] = cv2_img
-            return result
-        else:
-            result = np.zeros((height, height, 3))
-            result += [background_color[0],background_color[1],background_color[2]][::-1]
-            result[(height - width) // 2:((height - width) // 2) + width, 0:height] = cv2_img
-            return result
-    
-    def resize_image(self, img, c, rsize):
-        # return self.expand2square(img, c).resize((rsize, rsize))
-        return cv2.resize(self.expand2square(img, c), dsize=(rsize, rsize))
-
-class DataArgmantation_class:
-
-    def Salt_noise(self, path, amount=0.015):
-        src = cv2.imread(path, 1)
-        s_vs_p = 0.5
-        sp_img = src.copy()
-        num_salt = np.ceil(amount * src.size * s_vs_p)
-        coords = [np.random.randint(0, i-1 , int(num_salt)) for i in src.shape]
-        sp_img[tuple(coords[:-1])] = (255,255,255)
-        return sp_img
-
-    def Pepper_noise(self, path, amount=0.015):
-        src = cv2.imread(path, 1)
-        s_vs_p = 0.5
-        sp_img = src.copy()
-        num_pepper = np.ceil(amount* src.size * (1. - s_vs_p))
-        coords = [np.random.randint(0, i-1 , int(num_pepper)) for i in src.shape]
-        sp_img[tuple(coords[:-1])] = (0,0,0)
-        return sp_img
-
-    def Smooth_noise(self, path):
-        average_square = (10,10)
-        src = cv2.imread(path, 1)
-        blur_img = cv2.blur(src, average_square)
-        return blur_img
-
-    def flip_lr(self, path):
-        src = cv2.imread(path, 1)
-        flip_lr_img = cv2.flip(src, 1)
-        return flip_lr_img
-
-
-
-def make_points_file(jsondata, TTVPATH, rsize, name='', options=''):
-    if TTVPATH == 'train': OUTPUT_PATH = BASE_OUTPUT_PATH + '/train/labels'
-    elif TTVPATH == 'test': OUTPUT_PATH = BASE_OUTPUT_PATH + '/test/labels'
-    elif TTVPATH == 'valid': OUTPUT_PATH = BASE_OUTPUT_PATH + '/valid/labels'
-    else:
-        print('【error】') 
-        return
-    ArgClass = arg_class()
-    DirClass = dir_class()
-    
-    DirClass.make_dir(OUTPUT_PATH)
-
-    first = True
-    file = open(jsondata , 'r')
-    jsonfile = json.load(file)
-    if name == '': name = jsonfile['asset']['name']
-    id = jsonfile['asset']['id']
-    img_width = jsonfile['asset']['size']['width']
-    img_height = jsonfile['asset']['size']['height']
-    for reg in jsonfile['regions']:
-        mode = 'a'
-        if first:
-            mode = 'w'
-            first = False
-
-        points = reg['points']
-        # x2 > x1, y2 > y1
-        x2 = max(points[0]['x'], points[1]['x'])
-        x1 = min(points[0]['x'], points[1]['x'])
-        y2 = max(points[0]['y'], points[2]['y'])
-        y1 = min(points[0]['y'], points[2]['y'])
-
-        width = x2 - x1
-        height = y2 - y1
-        xm, ym = x1 + (width / 2), y1 + (height / 2)
-
-        with open(OUTPUT_PATH + '/' + name + '.rf.' + id + '.txt', mode=mode) as f:
-            # [oject-class] [x_center] [y_center] [width] [height]
-            if img_width > img_height:
-                ym = ym + (img_width - img_height)/2
-                ym = ym * (rsize/img_width)
-                xm = xm * (rsize/img_width)
-                width = width * (rsize/img_width)
-                height = height * (rsize/img_width)
-            elif img_width <= img_height:
-                xm = xm + (img_height - img_width)/2 
-                ym = ym * (rsize/img_height)
-                xm = xm * (rsize/img_height)
-                width = width * (rsize/img_height)
-                height = height * (rsize/img_height)
-
-            if options == '': f.write('0 {} {} {} {}\n'.format(xm/rsize, ym/rsize, width/rsize, height/rsize))
-            elif options == 'fliplr': f.write('0 {} {} {} {}\n'.format((1-xm/rsize), ym/rsize, width/rsize, height/rsize))
-    print('【 Success 】Create {}'.format(OUTPUT_PATH + '/' + name + '.rf.' + id + '.txt'))
-    return name, id
 
 def main():
     ArgClass = arg_class()
     DirClass = dir_class()
     ImgClass = image_class()
     DaClass= DataArgmantation_class()
+    txtClass = txt_class()
     args = ArgClass.get_args()
     image_size = args.size
     INPUT_JSON = args.INPUT_JSON
@@ -181,7 +35,7 @@ def main():
         return
 
     DirClass.make_tree_dir()
-    make_yaml()
+    txtClass.make_yaml()
 
     json_list = glob.glob(INPUT_JSON + '/*.json')
     image_list = glob.glob(INPUT_IMAGE + '/*.jpg')
@@ -192,93 +46,93 @@ def main():
     image_list.sort()
     random.shuffle(json_list)
     for i in range(trainnum):
-        name, id = make_points_file(json_list[i], 'train', image_size)
+        name, id = txtClass.make_points_file(json_list[i], 'train', image_size)
         im = cv2.imread(INPUT_IMAGE + '/' + name)
         im_new = ImgClass.resize_image(im, (0, 0, 0), image_size)
         cv2.imwrite(BASE_OUTPUT_PATH + '/train/images/' + name + '.rf.' + id + '.jpg', im_new)
         if data_argment is not None:
             if not {'salt', 'sal', 'sa'}.isdisjoint(set(data_argment)):
-                make_points_file(json_list[i], 'train', image_size, name + 'salt')
+                txtClass.make_points_file(json_list[i], 'train', image_size, name + 'salt')
                 salt_im = DaClass.Salt_noise(INPUT_IMAGE + '/' + name)
                 salt_new_im = ImgClass.resize_image(salt_im, (0, 0, 0), image_size)
                 cv2.imwrite(BASE_OUTPUT_PATH + '/train/images/' + name + 'salt.rf.' + id + '.jpg', salt_new_im)
 
             if not {'pepper', 'peppe', 'pepp', 'pep', 'pe'}.isdisjoint(set(data_argment)):
-                make_points_file(json_list[i], 'train', image_size, name + 'pepper')
+                txtClass.make_points_file(json_list[i], 'train', image_size, name + 'pepper')
                 pep_im = DaClass.Pepper_noise(INPUT_IMAGE + '/' + name)
                 pep_new_im = ImgClass.resize_image(pep_im, (0, 0, 0), image_size)
                 cv2.imwrite(BASE_OUTPUT_PATH + '/train/images/' + name + 'pepper.rf.' + id + '.jpg', pep_new_im)
 
             if not {'smooth', 'smoot', 'smoo', 'smo', 'sm'}.isdisjoint(set(data_argment)):
-                make_points_file(json_list[i], 'train', image_size, name + 'smooth')
+                txtClass.make_points_file(json_list[i], 'train', image_size, name + 'smooth')
                 smooth_im = DaClass.Smooth_noise(INPUT_IMAGE + '/' + name)
                 smooth_new_im = ImgClass.resize_image(smooth_im, (0, 0, 0), image_size)
                 cv2.imwrite(BASE_OUTPUT_PATH + '/train/images/' + name + 'smooth.rf.' + id + '.jpg', smooth_new_im)
 
             if not {'fliplr', 'flipl', 'flip', 'fli', 'fl'}.isdisjoint(set(data_argment)):
-                make_points_file(json_list[i], 'train', image_size, name + 'fliplr', 'fliplr')
+                txtClass.make_points_file(json_list[i], 'train', image_size, name + 'fliplr', 'fliplr')
                 flip_im = DaClass.flip_lr(INPUT_IMAGE + '/' + name)
                 flip_new_im = ImgClass.resize_image(flip_im, (0, 0, 0), image_size)
                 cv2.imwrite(BASE_OUTPUT_PATH + '/train/images/' + name + 'fliplr.rf.' + id + '.jpg', flip_new_im)
 
 
     for i in range(trainnum, trainnum + testnum):
-        name, id = make_points_file(json_list[i], 'test',image_size)
+        name, id = txtClass.make_points_file(json_list[i], 'test',image_size)
         im = cv2.imread(INPUT_IMAGE + '/' + name)
         im_new = ImgClass.resize_image(im, (0, 0, 0), image_size)
         cv2.imwrite(BASE_OUTPUT_PATH + '/test/images/' + name + '.rf.' + id + '.jpg', im_new)
         if data_argment is not None:
             if not {'salt', 'sal', 'sa'}.isdisjoint(set(data_argment)):
-                make_points_file(json_list[i], 'test', image_size, name + 'salt')
+                txtClass.make_points_file(json_list[i], 'test', image_size, name + 'salt')
                 salt_im = DaClass.Salt_noise(INPUT_IMAGE + '/' + name)
                 salt_new_im = ImgClass.resize_image(salt_im, (0, 0, 0), image_size)
                 cv2.imwrite(BASE_OUTPUT_PATH + '/test/images/' + name + 'salt.rf.' + id + '.jpg', salt_new_im)
 
             if not {'pepper', 'peppe', 'pepp', 'pep', 'pe'}.isdisjoint(set(data_argment)):
-                make_points_file(json_list[i], 'test', image_size, name + 'pepper')
+                txtClass.make_points_file(json_list[i], 'test', image_size, name + 'pepper')
                 pep_im = DaClass.Pepper_noise(INPUT_IMAGE + '/' + name)
                 pep_new_im = ImgClass.resize_image(pep_im, (0, 0, 0), image_size)
                 cv2.imwrite(BASE_OUTPUT_PATH + '/test/images/' + name + 'pepper.rf.' + id + '.jpg', pep_new_im)
 
             if not {'smooth', 'smoot', 'smoo', 'smo', 'sm'}.isdisjoint(set(data_argment)):
-                make_points_file(json_list[i], 'test', image_size, name + 'smooth')
+                txtClass.make_points_file(json_list[i], 'test', image_size, name + 'smooth')
                 smooth_im = DaClass.Smooth_noise(INPUT_IMAGE + '/' + name)
                 smooth_new_im = ImgClass.resize_image(smooth_im, (0, 0, 0), image_size)
                 cv2.imwrite(BASE_OUTPUT_PATH + '/test/images/' + name + 'smooth.rf.' + id + '.jpg', smooth_new_im)
 
             if not {'fliplr', 'flipl', 'flip', 'fli', 'fl'}.isdisjoint(set(data_argment)):
-                make_points_file(json_list[i], 'test', image_size, name + 'fliplr','fliplr')
+                txtClass.make_points_file(json_list[i], 'test', image_size, name + 'fliplr','fliplr')
                 flip_im = DaClass.flip_lr(INPUT_IMAGE + '/' + name)
                 flip_new_im = ImgClass.resize_image(flip_im, (0, 0, 0), image_size)
                 cv2.imwrite(BASE_OUTPUT_PATH + '/test/images/' + name + 'fliplr.rf.' + id + '.jpg', flip_new_im)
 
 
     for i in range(trainnum + testnum, jsonnum):
-        name, id = make_points_file(json_list[i], 'valid', image_size)
+        name, id = txtClass.make_points_file(json_list[i], 'valid', image_size)
         im = cv2.imread(INPUT_IMAGE + '/' + name)
         im_new = ImgClass.resize_image(im, (0, 0, 0), image_size)
         cv2.imwrite(BASE_OUTPUT_PATH + '/valid/images/' + name + '.rf.' + id + '.jpg', im_new)
         if data_argment is not None:
             if not {'salt', 'sal', 'sa'}.isdisjoint(set(data_argment)):
-                make_points_file(json_list[i], 'valid', image_size, name + 'salt')
+                txtClass.make_points_file(json_list[i], 'valid', image_size, name + 'salt')
                 salt_im = DaClass.Salt_noise(INPUT_IMAGE + '/' + name)
                 salt_new_im = ImgClass.resize_image(salt_im, (0, 0, 0), image_size)
                 cv2.imwrite(BASE_OUTPUT_PATH + '/valid/images/' + name + 'salt.rf.' + id + '.jpg', salt_new_im)
 
             if not {'pepper', 'peppe', 'pepp', 'pep', 'pe'}.isdisjoint(set(data_argment)):
-                make_points_file(json_list[i], 'valid', image_size, name + 'pepper')
+                txtClass.make_points_file(json_list[i], 'valid', image_size, name + 'pepper')
                 pep_im = DaClass.Pepper_noise(INPUT_IMAGE + '/' + name)
                 pep_new_im = ImgClass.resize_image(pep_im, (0, 0, 0), image_size)
                 cv2.imwrite(BASE_OUTPUT_PATH + '/valid/images/' + name + 'pepper.rf.' + id + '.jpg', pep_new_im)
 
             if not {'smooth', 'smoot', 'smoo', 'smo', 'sm'}.isdisjoint(set(data_argment)):
-                make_points_file(json_list[i], 'valid', image_size, name + 'smooth')
+                txtClass.make_points_file(json_list[i], 'valid', image_size, name + 'smooth')
                 smooth_im = DaClass.Smooth_noise(INPUT_IMAGE + '/' + name)
                 smooth_new_im = ImgClass.resize_image(smooth_im, (0, 0, 0), image_size)
                 cv2.imwrite(BASE_OUTPUT_PATH + '/valid/images/' + name + 'smooth.rf.' + id + '.jpg', smooth_new_im)
 
             if not {'fliplr', 'flipl', 'flip', 'fli', 'fl'}.isdisjoint(set(data_argment)):
-                make_points_file(json_list[i], 'valid', image_size, name + 'fliplr','fliplr')
+                txtClass.make_points_file(json_list[i], 'valid', image_size, name + 'fliplr','fliplr')
                 flip_im = DaClass.flip_lr(INPUT_IMAGE + '/' + name)
                 flip_new_im = ImgClass.resize_image(flip_im, (0, 0, 0), image_size)
                 cv2.imwrite(BASE_OUTPUT_PATH + '/vaild/images/' + name + 'fliplr.rf.' + id + '.jpg', flip_new_im)
