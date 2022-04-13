@@ -9,8 +9,8 @@ class txt_class():
         with open(BASE_OUTPUT_PATH + '/data.yaml', mode='w') as f:
             f.write(YAML_PATH)
 
-    def make_points_file(self, jsondata, TTVPATH, rsize, BASE_OUTPUT_PATH, name='', options=''):
-        OUTPUT_PATH = BASE_OUTPUT_PATH + '/' + TTVPATH + '/labels'
+    def make_points_file(self, jsondata, kind, rsize, BASE_OUTPUT_PATH, name='', options=''):
+        OUTPUT_PATH = BASE_OUTPUT_PATH + '/' + kind + '/labels'
 
         first = True
         file = open(jsondata , 'r')

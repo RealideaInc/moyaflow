@@ -1,11 +1,6 @@
-import os
-import json
 import glob
-import argparse
-import numpy as np
 import cv2
-import random, string
-from PIL import Image
+import random
 from Class import arg_class, dir_class, image_class, DataArgmantation_class, txt_class
 #import class
 ArgClass = arg_class.arg_class()
@@ -73,6 +68,7 @@ def main():
 
     json_list = glob.glob(INPUT_JSON + '/*.json')
     image_list = glob.glob(INPUT_IMAGE + '/*.jpg')
+
     jsonnum = len(json_list)
     trainnum = (jsonnum * train_rate) // 10
     testnum = (jsonnum * test_rate) // 10
