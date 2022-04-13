@@ -1,6 +1,6 @@
 # moyaflow
 
-roboflowのビッグバネイトです。パクリじゃないです。
+roboflowのビッグバネイトです。
 
 ## moyaflow.py
 
