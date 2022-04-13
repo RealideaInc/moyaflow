@@ -1,10 +1,10 @@
 import numpy as np
 import cv2
 
-im = cv2.imread('testtrees/train/images/00582.jpg.rf.c4553aeaf421ac41fab8506bd80eb4c2.jpg')
+im = cv2.imread('trees/train/images/00583.jpgfliplr.rf.a975c2c255fea433bd4e1027e20501cc.jpg')
 h,_,_ = im.shape
 
-f = open('testtrees/train/labels/00582.jpg.rf.c4553aeaf421ac41fab8506bd80eb4c2.txt', 'r', encoding='UTF-8')
+f = open('trees/train/labels/00583.jpgfliplr.rf.a975c2c255fea433bd4e1027e20501cc.txt', 'r', encoding='UTF-8')
 data = f.readlines()
 l = []
 for li in data:
