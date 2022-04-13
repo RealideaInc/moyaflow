@@ -1,7 +1,6 @@
 import numpy as np
 import cv2
 
-
 class DataArgmantation_class:
 
     def Salt_noise(self, path, amount=0.015):
