@@ -1,26 +1,16 @@
 import json
 import sys
-sys.path.append('../')
-import moyaflow as mf
 from Class import dir_class
 
 class txt_class():
 
-    def make_yaml(self):
-        YAML_PATH = 'train: {}/train/images\nval: {}/valid/images\nnc: 1\nnames: [\'Tree\']'.format(mf.BASE_OUTPUT_PATH, mf.BASE_OUTPUT_PATH)
-        with open(mf.BASE_OUTPUT_PATH + '/data.yaml', mode='w') as f:
+    def make_yaml(self, BASE_OUTPUT_PATH):
+        YAML_PATH = 'train: {}/train/images\nval: {}/valid/images\nnc: 1\nnames: [\'Tree\']'.format(BASE_OUTPUT_PATH, BASE_OUTPUT_PATH)
+        with open(BASE_OUTPUT_PATH + '/data.yaml', mode='w') as f:
             f.write(YAML_PATH)
 
-    def make_points_file(self,jsondata, TTVPATH, rsize, name='', options=''):
-        if TTVPATH == 'train': OUTPUT_PATH = mf.BASE_OUTPUT_PATH + '/train/labels'
-        elif TTVPATH == 'test': OUTPUT_PATH = mf.BASE_OUTPUT_PATH + '/test/labels'
-        elif TTVPATH == 'valid': OUTPUT_PATH = mf.BASE_OUTPUT_PATH + '/valid/labels'
-        else:
-            print('【error】') 
-            return
-        DirClass = dir_class()
-
-        DirClass.make_dir(OUTPUT_PATH)
+    def make_points_file(self, jsondata, TTVPATH, rsize, BASE_OUTPUT_PATH, name='', options=''):
+        OUTPUT_PATH = BASE_OUTPUT_PATH + '/' + TTVPATH + '/labels'
 
         first = True
         file = open(jsondata , 'r')
