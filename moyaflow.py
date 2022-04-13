@@ -13,17 +13,17 @@ test_rate = 2
 vaild_rate = 1
 
 def main():
-    ArgClass = arg_class()
-    DirClass = dir_class()
-    ImgClass = image_class()
-    DaClass= DataArgmantation_class()
-    txtClass = txt_class()
+    ArgClass = arg_class.arg_class()
+    DirClass = dir_class.dir_class()
+    ImgClass = image_class.image_class()
+    DaClass= DataArgmantation_class.DataArgmantation_class()
+    txtClass = txt_class.txt_class()
     args = ArgClass.get_args()
     image_size = args.size
     INPUT_JSON = args.INPUT_JSON
     INPUT_IMAGE = args.INPUT_IMAGE
     data_argment = args.DataArgment
-    print(data_argment)
+
     input_ok, waring_str = ArgClass.check_INPUT(INPUT_JSON)
     if not input_ok:
         print(waring_str)

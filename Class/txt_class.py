@@ -1,13 +1,8 @@
-import os
 import json
-import glob
-import argparse
-import numpy as np
-import cv2
-import random, string
-from PIL import Image
-from .. import moyaflow as mf
-from . import dir_class
+import sys
+sys.path.append('../')
+import moyaflow as mf
+from Class import dir_class
 
 class txt_class():
 

@@ -1,11 +1,5 @@
-import os
-import json
-import glob
-import argparse
 import numpy as np
 import cv2
-import random, string
-from PIL import Image
 
 class image_class:
 
@@ -23,7 +17,7 @@ class image_class:
             result += [background_color[0],background_color[1],background_color[2]][::-1]
             result[(height - width) // 2:((height - width) // 2) + width, 0:height] = cv2_img
             return result
-    
+
     def resize_image(self, img, c, rsize):
         # return self.expand2square(img, c).resize((rsize, rsize))
         return cv2.resize(self.expand2square(img, c), dsize=(rsize, rsize))

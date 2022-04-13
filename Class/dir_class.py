@@ -1,6 +1,7 @@
 import os
-from .. import moyaflow as mf
-
+import sys
+sys.path.append('../')
+import moyaflow as mf
 
 class dir_class:
 
