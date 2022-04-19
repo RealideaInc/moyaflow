@@ -1,15 +1,18 @@
 import json
 import sys
+
+from torch import classes
 from Class import dir_class
 
 class txt_class():
 
-    def make_yaml(self, BASE_OUTPUT_PATH):
-        YAML_PATH = 'train: {}/train/images\nval: {}/valid/images\nnc: 1\nnames: [\'Tree\']'.format(BASE_OUTPUT_PATH, BASE_OUTPUT_PATH)
+    def make_yaml(self, BASE_OUTPUT_PATH, classes, class_cnt):
+
+        YAML_PATH = 'train: {}/train/images\nval: {}/valid/images\nnc: {}\nnames: {}'.format(BASE_OUTPUT_PATH, BASE_OUTPUT_PATH, class_cnt, classes)
         with open(BASE_OUTPUT_PATH + '/data.yaml', mode='w') as f:
             f.write(YAML_PATH)
 
-    def make_points_file(self, jsondata, kind, rsize, BASE_OUTPUT_PATH, name='', options=''):
+    def make_points_file(self, jsondata, kind, class_dict, rsize, BASE_OUTPUT_PATH, name='', options=''):
         OUTPUT_PATH = BASE_OUTPUT_PATH + '/' + kind + '/labels'
 
         first = True
@@ -24,7 +27,7 @@ class txt_class():
             if first:
                 mode = 'w'
                 first = False
-
+            reg_class = reg['tags'][0]
             points = reg['points']
             # x2 > x1, y2 > y1
             x2 = max(points[0]['x'], points[1]['x'])
@@ -51,7 +54,7 @@ class txt_class():
                     width = width * (rsize/img_height)
                     height = height * (rsize/img_height)
 
-                if options == '': f.write('0 {} {} {} {}\n'.format(xm/rsize, ym/rsize, width/rsize, height/rsize))
-                elif options == 'fliplr': f.write('0 {} {} {} {}\n'.format((1-xm/rsize), ym/rsize, width/rsize, height/rsize))
+                if options == '': f.write('{} {} {} {} {}\n'.format(class_dict[reg_class], xm/rsize, ym/rsize, width/rsize, height/rsize))
+                elif options == 'fliplr': f.write('{} {} {} {} {}\n'.format(class_dict[reg_class], (1-xm/rsize), ym/rsize, width/rsize, height/rsize))
         print('【 Success 】Create {}'.format(OUTPUT_PATH + '/' + name + '.rf.' + id + '.txt'))
         return name, id
