@@ -15,7 +15,7 @@ IMAGE_SIZE = args.size
 INPUT_JSON = args.INPUT_JSON
 INPUT_IMAGE = args.INPUT_IMAGE
 DATA_ARGMENT = args.DataArgment
-BASE_OUTPUT_PATH = "./trees"
+BASE_OUTPUT_PATH = args.path
 
 train_rate = 7
 test_rate = 2
