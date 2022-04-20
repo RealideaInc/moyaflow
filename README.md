@@ -15,6 +15,7 @@ roboflowのビッグバネイトです。
 
   - **-h, --help**    ：        ヘルプ。
   - **-s SIZE, --size SIZE**：  出力画像ファイルの一辺の長さを決めます（画像ファイルは正方形）。
+  - **-p PATH, --path PATH: 出力されるデータのパスを指定できます。
   - **-d DataArgment, --DaraArgment**：　水増しデータを作るオプションです。現在使えるフィルタはsalt, pepper, smooth, fliplrの4種類です。使いたいフィルタを-dの後に入れるとその分画像データが水増しされます。例えば、saltとsmoothを使いたければ"-d salt smooth"とします（これらは省略して"-d sa sm"としても動きます）。
     - **salt** : 塩ノイズと呼ばれるノイズをかけます。[wiki-ごま塩ノイズ](https://ja.wikipedia.org/wiki/%E3%81%94%E3%81%BE%E5%A1%A9%E3%83%8E%E3%82%A4%E3%82%BA)
     - **pepper** : ペッパーノイズと呼ばれるノイズをかけます。塩ノイズが黒くなっただけです。好きな方にしてください。
@@ -37,7 +38,7 @@ roboflowのビッグバネイトです。
       ├── images
       └── labels
 ```
-- もし、出力フォルダを変えたければ`BASE_OUTPUT_PATH`を変更してください（初期では実行したフォルダにtreesが作成されます）
+
 - ## point_checker.py
 
 - moyaflow.pyで出来た画像ファイルとlabel.txtが正しく対応しているかを確認するプログラムです。
