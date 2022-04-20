@@ -17,9 +17,10 @@ INPUT_IMAGE = args.INPUT_IMAGE
 DATA_ARGMENT = args.DataArgment
 BASE_OUTPUT_PATH = args.path
 
-train_rate = 7
-test_rate = 2
-vaild_rate = 1
+ratelist = args.rate
+train_rate = ratelist[0]
+test_rate = ratelist[1]
+valid_rate = ratelist[2]
 
 def class_count(json_list):
     classes = set()
