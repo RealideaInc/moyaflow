@@ -23,7 +23,7 @@
 
  - 出力フォルダの階層は以下のようになっています
  ```
- - trees(変更可能)
+ - yolov5_anotation_data(変更可能)
   ├── data.yaml
   ├── test
   │   ├── images
