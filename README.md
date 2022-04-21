@@ -1,7 +1,5 @@
 # moyaflow
 
-roboflowのビッグバネイトです。
-
 ## moyaflow.py
 
 - VoTTで作成したJSONファイルとその画像データをyolov5のフォーマットに変換します。
