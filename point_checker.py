@@ -1,7 +1,7 @@
 import numpy as np
 import cv2
 
-color = [(255,255,0), (255,0,255), (0,255,255)]
+color = [(255,255,0), (255,0,255), (0,255,255), (255,255,0), (0,0,255)]
 
 im = cv2.imread('trees/test/images/snoopy00004.jpg.rf.d55ee07d43dad4c7cd9f3d3ccc3d4d1a.jpg')
 h,_,_ = im.shape
