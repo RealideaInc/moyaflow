@@ -1,8 +1,12 @@
 # moyaflow
 
+- (VoTT)[https://github.com/microsoft/VoTT]でアノテーションして作成したJSONファイルとその画像データをyolov5のフォーマットに変換します。
+
 ## moyaflow.py
 
 - VoTTで作成したJSONファイルとその画像データをyolov5のフォーマットに変換します。
+
+- 注意：JSONファイル名と画像ファイル名は拡張子を除いて一致している必要があります。
 
 - 必要な引数:
 
