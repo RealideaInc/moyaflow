@@ -2,12 +2,7 @@
 
 [VoTT](https://github.com/microsoft/VoTT)でアノテーションして作成したJSONファイルとその画像データをyolov5のフォーマットに変換するPythonスクリプトです。画像データの水増しもできます。
 
-<div>
-<center>
-　【VoTT】 →　【yolov5】<br>
-（Json File）  （txt File）
-</center>
-</div>
+![moyaflowimage3.png](/Users/tamoriyuuto/moyaflow_dir/image/moyaflowimage3.png)
 
 # Usage
 
