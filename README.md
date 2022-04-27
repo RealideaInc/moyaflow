@@ -1,6 +1,6 @@
 # moyaflow
 
-[VoTT]([GitHub - microsoft/VoTT: Visual Object Tagging Tool: An electron app for building end to end Object Detection Models from Images and Videos.](https://github.com/microsoft/VoTT))でアノテーションして作成したJSONファイルとその画像データをyolov5のフォーマットに変換するPythonスクリプトです。画像データの水増しもできます。
+[VoTT](https://github.com/microsoft/VoTT)でアノテーションして作成したJSONファイルとその画像データをyolov5のフォーマットに変換するPythonスクリプトです。画像データの水増しもできます。
 
 <div>
 <center>
@@ -11,7 +11,7 @@
 
 # DEMO
 
-1. [GitHub - microsoft/VoTT: Visual Object Tagging Tool: An electron app for building end to end Object Detection Models from Images and Videos.](https://github.com/microsoft/VoTT)や[【物体検出】アノテーションツールVoTTの使い方 | エンジニアの眠れない夜](https://sleepless-se.net/2019/06/21/how-to-use-vott/)などを参考にVoTTでアノテーションを行う。
+1. [GitHub - microsoft/VoTT: Visual Object Tagging Tool: An electron app for building end to end Object Detection Models from Images and Videos.](https://github.com/microsoft/VoTT)や[【物体検出】アノテーションツールVoTTの使い方](https://sleepless-se.net/2019/06/21/how-to-use-vott/)などを参考にVoTTでアノテーションを行う。
    この時**VoTTJson**として出力する。
 
 2. `moyaflow.py`を`clone`またはダウンロードして、`moyaflow.py`が存在するディレクトリで以下のコマンドを入力
