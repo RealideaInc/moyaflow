@@ -37,7 +37,7 @@ def class_count(json_list):
         print("Number of detected classes：", class_cnt)
         print("Class type：", class_dict)
         print('\n')
-        
+
         return classes, class_dict, class_cnt
 
 def make_tree(json_list, kind, class_dict, num1,num2=0):
