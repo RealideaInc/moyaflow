@@ -9,6 +9,20 @@
 </center>
 </div>
 
+# Usage
+
+```bash
+$ git clone https://github.com/RealideaInc/moyaflow.git
+```
+
+```bash
+$ cd moyaflow
+```
+
+```bash
+$ python moyaflow.py /Your/VoTTJson/Dir/Path /Your/Image/Dir/Path  
+```
+
 # DEMO
 
 1. [GitHub - microsoft/VoTT: Visual Object Tagging Tool: An electron app for building end to end Object Detection Models from Images and Videos.](https://github.com/microsoft/VoTT)や[【物体検出】アノテーションツールVoTTの使い方](https://sleepless-se.net/2019/06/21/how-to-use-vott/)などを参考にVoTTでアノテーションを行う。
@@ -30,21 +44,7 @@
 
 * `python 3.0`系
 
-# Usage
-
-```bash
-$ git clone https://github.com/RealideaInc/moyaflow.git
-```
-
-```bash
-$ cd moyaflow
-```
-
-```bash
-$ python moyaflow.py /Your/VoTTJson/Dir/Path /Your/Image/Dir/Path 
-```
-
-## moyaflow.py
+# ## moyaflow.py
 
 - 必要な引数:
   
