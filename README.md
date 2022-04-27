@@ -82,6 +82,12 @@ $ python moyaflow.py /Your/VoTTJson/Dir/Path /Your/Image/Dir/Path
      └── labels
     ```
 
+# Example
+ルートディレクトリ名`takopi`で全ての水増し処理をかける例
+```bash
+$ python moyaflow.py /Json /image -p takopi -d sa pe am fl
+```
+
 ## point_checker.py
 
 - moyaflow.pyで出来た画像ファイルとlabel.txtが正しく対応しているかを確認するデバッグ用プログラムです。
