@@ -1,7 +1,4 @@
-<div color="green">
-<center>
-<h1> moyaflow
-</div>
+# MOYAFLOW
 
 [VoTT](https://github.com/microsoft/VoTT)でアノテーションして作成したJSONファイルとその画像データをyolov5のフォーマットに変換するPythonスクリプトです。画像データの水増しもできます。
 
