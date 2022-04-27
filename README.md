@@ -39,7 +39,8 @@ $ python moyaflow.py /Your/VoTTJson/Dir/Path /Your/Image/Dir/Path
 
 * `python 3.0`系
 
-# ## moyaflow.py
+# Detail
+## moyaflow.py
 
 - 必要な引数:
   
@@ -84,3 +85,12 @@ $ python moyaflow.py /Your/VoTTJson/Dir/Path /Your/Image/Dir/Path
 - moyaflow.pyで出来た画像ファイルとlabel.txtが正しく対応しているかを確認するデバッグ用プログラムです。
 
 - 引数とかは特に作ってないので、pythonファイルの中身を適当に変更して使ってください
+
+# Author
+
+- moyac(田森湧斗)
+- タコピー大好きプログラミング同好会、合同会社Realidea
+- moyac@realidea.jp
+
+# License
+"MOYAFLOW" is under [MIT license](https://en.wikipedia.org/wiki/MIT_License).
