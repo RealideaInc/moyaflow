@@ -29,16 +29,16 @@ def class_count(json_list):
         jsonfile = json.load(file)
         for reg in jsonfile['regions']:
             classes.add(reg['tags'][0])
-        class_cnt = len(classes)
-        classes = list(classes)
-        lst0_classcnt = list(range(class_cnt))
-        class_dict = dict(zip(classes, lst0_classcnt))
+    class_cnt = len(classes)
+    classes = list(classes)
+    lst0_classcnt = list(range(class_cnt))
+    class_dict = dict(zip(classes, lst0_classcnt))
 
-        print("Number of detected classes：", class_cnt)
-        print("Class type：", class_dict)
-        print('\n')
+    print("Number of detected classes：", class_cnt)
+    print("Class type：", class_dict)
+    print('\n')
 
-        return classes, class_dict, class_cnt
+    return classes, class_dict, class_cnt
 
 def make_tree(json_list, kind, class_dict, num1,num2=0):
     for i in range(num2,num1):
